@@ -45,8 +45,8 @@ impl Vec3 {
 
     #[inline]
     pub fn abs(&self) -> Self {
-        let [x, y, z] = self.0;
-        Vec3([x.abs(), y.abs(), z.abs()])
+        let Vec3([a0, a1, a2]) = self;
+        Vec3([a0.abs(), a1.abs(), a2.abs()])
     }
 
     #[inline]
@@ -62,18 +62,18 @@ impl Vec3 {
     /// Inner product
     #[inline]
     pub fn dot(&self, other: Vec3) -> Scalar {
-        let v0 = self.0;
-        let v1 = other.0;
-        v0[0] * v1[0] + v0[1] * v1[1] + v0[2] * v1[2]
+        let Vec3([a0, a1, a2]) = self;
+        let Vec3([b0, b1, b2]) = other;
+        a0 * b0 + a1 * b1 + a2 * b2
     }
 
     /// Cross product
     #[inline]
     pub fn cross(&self, other: Vec3) -> Self {
         //        x   y   z
-        let Vec3([a1, a2, a3]) = self;
-        let Vec3([b1, b2, b3]) = other;
-        Vec3([a2 * b3 - a3 * b2, -(a1 * b3 - a3 * b1), a1 * b2 - a2 * b1])
+        let Vec3([a0, a1, a2]) = self;
+        let Vec3([b0, b1, b2]) = other;
+        Vec3([a1 * b2 - a2 * b1, -(a0 * b2 - a2 * b0), a0 * b1 - a1 * b0])
     }
 }
 
@@ -89,9 +89,19 @@ impl Add for Vec3 {
 
     #[inline]
     fn add(self, other: Self) -> Self::Output {
-        let v0 = self.0;
-        let v1 = other.0;
-        Vec3([v0[0] + v1[0], v0[1] + v1[1], v0[2] + v1[2]])
+        let Vec3([a0, a1, a2]) = self;
+        let Vec3([b0, b1, b2]) = other;
+        Vec3([a0 + b0, a1 + b1, a2 + b2])
+    }
+}
+
+impl Add<Scalar> for Vec3 {
+    type Output = Vec3;
+
+    #[inline]
+    fn add(self, scalar: Scalar) -> Self::Output {
+        let Vec3([a0, a1, a2]) = self;
+        Vec3([a0 + scalar, a1 + scalar, a2 + scalar])
     }
 }
 
@@ -100,9 +110,19 @@ impl Sub for Vec3 {
 
     #[inline]
     fn sub(self, other: Self) -> Self::Output {
-        let v0 = self.0;
-        let v1 = other.0;
-        Vec3([v0[0] - v1[0], v0[1] - v1[1], v0[2] - v1[2]])
+        let Vec3([a0, a1, a2]) = self;
+        let Vec3([b0, b1, b2]) = other;
+        Vec3([a0 - b0, a1 - b1, a2 - b2])
+    }
+}
+
+impl Sub<Scalar> for Vec3 {
+    type Output = Self;
+
+    #[inline]
+    fn sub(self, scalar: Scalar) -> Self::Output {
+        let Vec3([a0, a1, a2]) = self;
+        Vec3([a0 - scalar, a1 - scalar, a2 - scalar])
     }
 }
 
@@ -111,9 +131,9 @@ impl Mul for Vec3 {
 
     #[inline]
     fn mul(self, other: Self) -> Self::Output {
-        let v0 = self.0;
-        let v1 = other.0;
-        Vec3([v0[0] * v1[0], v0[1] * v1[1], v0[2] * v1[2]])
+        let Vec3([a0, a1, a2]) = self;
+        let Vec3([b0, b1, b2]) = other;
+        Vec3([a0 * b0, a1 * b1, a2 * b2])
     }
 }
 
@@ -122,7 +142,8 @@ impl Mul<Scalar> for Vec3 {
 
     #[inline]
     fn mul(self, scalar: Scalar) -> Self::Output {
-        Vec3([self.0[0] * scalar, self.0[1] * scalar, self.0[2] * scalar])
+        let Vec3([a0, a1, a2]) = self;
+        Vec3([a0 * scalar, a1 * scalar, a2 * scalar])
     }
 }
 
@@ -131,9 +152,9 @@ impl Div for Vec3 {
 
     #[inline]
     fn div(self, other: Self) -> Self::Output {
-        let Vec3([x0, y0, z0]) = self;
-        let Vec3([x1, y1, z1]) = other;
-        Vec3([x0 / x1, y0 / y1, z0 / z1])
+        let Vec3([a0, a1, a2]) = self;
+        let Vec3([b0, b1, b2]) = other;
+        Vec3([a0 / b0, a1 / b1, a2 / b2])
     }
 }
 
@@ -142,7 +163,8 @@ impl Div<Scalar> for Vec3 {
 
     #[inline]
     fn div(self, scalar: Scalar) -> Self::Output {
-        Vec3([self.0[0] / scalar, self.0[1] / scalar, self.0[2] / scalar])
+        let Vec3([a0, a1, a2]) = self;
+        Vec3([a0 / scalar, a1 / scalar, a2 / scalar])
     }
 }
 
@@ -151,18 +173,18 @@ impl Neg for Vec3 {
 
     #[inline]
     fn neg(self) -> Vec3 {
-        let Vec3([x, y, z]) = self;
-        Vec3([-x, -y, -z])
+        let Vec3([a0, a1, a2]) = self;
+        Vec3([-a0, -a1, -a2])
     }
 }
 
 impl From<Vec3> for Rgb<u8> {
     fn from(color: Vec3) -> Self {
-        let Vec3([x, y, z]) = color;
+        let Vec3([r, g, b]) = color;
         Rgb([
-            (x.min(1.0).max(0.0) * 255.0) as u8,
-            (y.min(1.0).max(0.0) * 255.0) as u8,
-            (z.min(1.0).max(0.0) * 255.0) as u8,
+            (r.min(1.0).max(0.0) * 255.0) as u8,
+            (g.min(1.0).max(0.0) * 255.0) as u8,
+            (b.min(1.0).max(0.0) * 255.0) as u8,
         ])
     }
 }
@@ -267,6 +289,7 @@ pub struct Distance {
     dist: Scalar,
 }
 
+#[derive(Clone, Copy)]
 pub struct Ray {
     origin: Vec3,
     direction: Vec3,
@@ -555,17 +578,12 @@ where
 // -----------------------------------------------------------------------------
 pub struct Sphere {
     material: Material,
-    center: Vec3,
     radius: Scalar,
 }
 
 impl Sphere {
-    pub fn new(material: Material, center: Vec3, radius: Scalar) -> Self {
-        Self {
-            material,
-            center,
-            radius,
-        }
+    pub fn new(material: Material, radius: Scalar) -> Self {
+        Self { material, radius }
     }
 }
 
@@ -573,7 +591,7 @@ impl Shape for Sphere {
     #[inline]
     fn sdf(&self, point: Vec3) -> Distance {
         Distance {
-            dist: (self.center - point).len() - self.radius,
+            dist: point.len() - self.radius,
             material: self.material.clone(),
         }
     }
@@ -740,39 +758,34 @@ impl PathTracer {
                 let normal = scene.shape.normal(hit.point);
 
                 // direct illumination by light
-                let direct: Vec3 = scene
-                    .lights
-                    .iter()
-                    .filter_map(|light| {
-                        let light_at = light.illuminate(hit.point);
-                        let shadow_ray = Ray::new(hit.point, -light_at.direction);
-                        match scene.shape.cast(shadow_ray, Some(light_at.distance)) {
-                            None => {
-                                Some(light_at.intensity * normal.dot(-light_at.direction).max(0.0))
+                let direct = {
+                    let direct: Vec3 = scene
+                        .lights
+                        .iter()
+                        .filter_map(|light| {
+                            let light_at = light.illuminate(hit.point);
+                            let shadow_ray = Ray::new(hit.point, -light_at.direction);
+                            match scene.shape.cast(shadow_ray, Some(light_at.distance)) {
+                                None => Some(
+                                    light_at.intensity * normal.dot(-light_at.direction).max(0.0),
+                                ),
+                                Some(_) => None,
                             }
-                            Some(_) => None,
-                        }
-                    })
-                    .sum();
-                let direct = hit.material.reflectance * direct / PI;
-
-                // global illumination
-                let indirect = if self.samples > 0 {
-                    let coords = create_coords(normal);
-                    let pdf = 1.0 / (2.0 * PI); // uniform hemesphere PDF
-                    let brdf = hit.material.reflectance / PI;
-                    let samples_sum: Vec3 = (0..self.samples)
-                        .map(|_| {
-                            let sample = &coords * uniform_hemisphere_sample(); // sample in world coordinates
-                            let sample_ray = Ray::new(hit.point, sample);
-                            let cos_theta = sample.dot(normal);
-                            let incoming = self.trace_rec(scene, sample_ray, bounces - 1);
-                            brdf * incoming * cos_theta / pdf
                         })
                         .sum();
-                    samples_sum / self.samples as Scalar
-                } else {
-                    Vec3::ZERO
+                    hit.material.reflectance * direct / PI
+                };
+
+                // global illumination
+                let indirect = {
+                    let pdf = 1.0 / (2.0 * PI); // uniform hemesphere PDF
+                    let brdf = hit.material.reflectance / PI;
+
+                    let sample = &create_coords(normal) * uniform_hemisphere_sample(); // sample in world coordinates
+                    let sample_ray = Ray::new(hit.point, sample);
+                    let cos_theta = sample.dot(normal);
+                    let incoming = self.trace_rec(scene, sample_ray, bounces - 1);
+                    brdf * incoming * cos_theta / pdf
                 };
 
                 direct + indirect + hit.material.emittance
@@ -783,7 +796,10 @@ impl PathTracer {
 
 impl Tracer for PathTracer {
     fn trace(&self, scene: &Scene, ray: Ray) -> Vec3 {
-        self.trace_rec(scene, ray, self.bounces)
+        let samples_sum: Vec3 = (0..self.samples)
+            .map(|_| self.trace_rec(scene, ray, self.bounces))
+            .sum();
+        samples_sum / self.samples as Scalar
     }
 }
 
@@ -849,6 +865,20 @@ fn rad(deg: Scalar) -> Scalar {
     deg / 180.0 * PI
 }
 
+fn tonemap_uncharted2(c: Vec3) -> Vec3 {
+    let v0 = 0.15;
+    let v1 = 0.50;
+    let v2 = 0.10;
+    let v3 = 0.20;
+    let v4 = 0.02;
+    let v5 = 0.30;
+    ((c * (c * v0 + v2 * v1) + v3 * v4) / (c * (c * v0 + v1) + v3 * v5)) - v4 / v5
+}
+
+fn tonemap_reinhard(color: Vec3) -> Vec3 {
+    color / (color + 1.0)
+}
+
 // -----------------------------------------------------------------------------
 // Entry Point
 // -----------------------------------------------------------------------------
@@ -857,41 +887,40 @@ fn scene() -> Scene {
     let m0 = Material::new(Vec3([184.0, 187.0, 38.0]) / 255.0); // geen-bold
     let m1 = Material::new(Vec3([152.0, 151.0, 26.0]) / 255.0); // green
     let m2 = Material::new(Vec3([134.0, 98.0, 177.0]) / 255.0); // magenta
-    let m3 = Material::new(Vec3::ZERO).with_emittance(Vec3::ONE * 15.0);
+    let m3 = Material::new(Vec3::ZERO).with_emittance(Vec3::ONE * 10.0);
+    let m4 = Material::new(Vec3([204.0, 36.0, 29.0]) / 255.0); // red
 
     let shape = Box::new(m0.clone(), Vec3([1.5; 3]))
-        .intersect(Sphere::new(m1.clone(), Vec3::ZERO, 1.0))
+        .intersect(Sphere::new(m1.clone(), 1.0))
         .diff(
             Cylinder::new(m2.clone(), 2.0, 0.5)
                 .union(Cylinder::new(m2.clone(), 2.0, 0.5).rot(Mat3::rot_x(rad(90.0))))
                 .union(Cylinder::new(m2.clone(), 2.0, 0.5).rot(Mat3::rot_y(rad(90.0)))),
         )
         .rot(&Mat3::rot_x(rad(-35.0)) * &Mat3::rot_y(rad(-30.0)))
-        .scale(1.5);
+        .scale(1.5)
+        .translate(Vec3([0.0, 0.0, -2.0]));
 
     let tor = Torus::new(m3, 1.0, 0.3)
         .rot(&Mat3::rot_x(rad(45.)) * &Mat3::rot_y(rad(-45.0)))
         .translate(Vec3([1.0, -1.0, -1.0]) * 2.5);
 
+    let sphere = Sphere::new(m4, 2.0).translate(Vec3([-3.0; 3]));
+
     let room = Box::new(Material::new(Vec3([1.0; 3])), Vec3([10.0; 3])).invert();
 
-    let shape = room.union(tor.union(shape));
+    let shape = room.union(tor.union(shape).union(sphere));
 
     // Lights
     let l0 = std::boxed::Box::new(PointLight {
         color: Vec3::ONE,
-        intensity: 200.0,
-        position: Vec3([1.5, -0.5, 3.0]),
-    });
-    let l1 = std::boxed::Box::new(PointLight {
-        color: Vec3::ONE,
-        intensity: 200.0,
-        position: Vec3([0.0, 3.0, 0.0]),
+        intensity: 150.0,
+        position: Vec3([2.0, 1.5, 3.0]),
     });
 
     Scene {
         shape: std::boxed::Box::new(shape),
-        lights: vec![l0, l1],
+        lights: vec![l0],
     }
 }
 
@@ -900,8 +929,8 @@ fn main() {
     let scene = scene();
 
     let tracer = PathTracer {
-        samples: 32,
-        bounces: 2,
+        samples: 1024,
+        bounces: 3,
     };
     // let tracer = NormalTracer;
 
@@ -910,7 +939,9 @@ fn main() {
         let ray = Ray::new(origin, ray_direction(rad(120.0), width, height, x, y));
         let color = tracer.trace(&scene, ray);
         // tone mapping
-        Rgb::<u8>::from(color / (color + Vec3::ONE))
+        Rgb::<u8>::from(tonemap_reinhard(color))
+        // Rgb::<u8>::from(tonemap_uncharted2(color))
+        // Rgb::<u8>::from(color)
     });
 
     image
