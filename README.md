@@ -25,3 +25,9 @@ Samples: 4096
 Bounces: 3
 
 ![s4096b3](/images/s4096b3.png "samples 4096, bounces 3")
+
+
+Samples: 32768
+Bounces: 4
+
+![s32768b4](/images/s32768b4.png "samples 32768, bounces 4")
