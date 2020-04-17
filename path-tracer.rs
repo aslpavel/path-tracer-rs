@@ -14,7 +14,7 @@
 /// - Signed distance function defined objects
 /// - Ray marching tracing
 ///
-use image::{ImageBuffer, Rgb, RgbImage};
+use image::{ImageBuffer, Pixel, Rgb, RgbImage};
 use std::{
     iter::Sum,
     ops::{Add, Div, Mul, Neg, Sub},
@@ -855,7 +855,7 @@ where
         // flat map pixels in serial iterator
         .collect::<Vec<_>>()
         .iter()
-        .flat_map(|pixel| &pixel.data)
+        .flat_map(|pixel| pixel.channels())
         .cloned()
         .collect();
     ImageBuffer::from_vec(width, height, storage).expect("ImageBuffer::from_raw failed")
